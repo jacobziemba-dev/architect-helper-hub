@@ -1,0 +1,14 @@
+Room Number,Room Name,Area (SF),Floor Finish,Base,Wall Finish,Ceiling Finish,Ceiling Height,Remarks
+101,Entry,120,Tile,Rubber,Paint,Gypsum,9'-0",High traffic area
+102,Living Room,350,Hardwood,Wood,Paint,Gypsum,9'-0",
+103,Kitchen,180,Tile,Rubber,Paint,Gypsum,9'-0",Backsplash required
+104,Dining,200,Hardwood,Wood,Paint,Gypsum,9'-0",
+105,Powder Room,45,Tile,Rubber,Paint,Gypsum,9'-0",Moisture resistant
+106,Office,140,Carpet,Vinyl,Paint,Gypsum,9'-0",
+107,Storage,60,Concrete,Rubber,Paint,Gypsum,9'-0",
+201,Master Bedroom,320,Carpet,Vinyl,Paint,Gypsum,8'-6",
+202,Master Bath,95,Tile,Rubber,Paint,Gypsum,8'-6",Moisture resistant
+203,Bedroom 2,165,Carpet,Vinyl,Paint,Gypsum,8'-6",
+204,Bedroom 3,150,Carpet,Vinyl,Paint,Gypsum,8'-6",
+205,Bath 2,75,Tile,Rubber,Paint,Gypsum,8'-6",Moisture resistant
+206,Laundry,50,Tile,Rubber,Paint,Gypsum,8'-6",

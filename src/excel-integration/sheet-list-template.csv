@@ -1,0 +1,29 @@
+Sheet Number,Sheet Name,Drawing File,Category,Notes
+A-000,Cover Sheet,cover.dwg,Architectural,Project information and index
+A-001,Site Plan,site.dwg,Architectural,Overall site layout
+A-100,Floor Plan - Level 1,floor-1.dwg,Architectural,Ground floor plan
+A-101,Floor Plan - Level 2,floor-2.dwg,Architectural,Second floor plan
+A-102,Floor Plan - Roof,roof.dwg,Architectural,Roof plan
+A-200,Building Elevations - North,elev-n.dwg,Architectural,North elevation
+A-201,Building Elevations - South,elev-s.dwg,Architectural,South elevation
+A-202,Building Elevations - East,elev-e.dwg,Architectural,East elevation
+A-203,Building Elevations - West,elev-w.dwg,Architectural,West elevation
+A-300,Building Section - A,sect-a.dwg,Architectural,Longitudinal section
+A-301,Building Section - B,sect-b.dwg,Architectural,Transverse section
+A-400,Wall Sections,wall-sect.dwg,Architectural,Typical wall sections
+A-401,Details - Foundation,detail-found.dwg,Architectural,Foundation details
+A-402,Details - Roof,detail-roof.dwg,Architectural,Roof details
+A-500,Schedules,schedules.dwg,Architectural,Door and window schedules
+S-100,Structural Plan - Foundation,struct-found.dwg,Structural,Foundation plan
+S-101,Structural Plan - Level 1,struct-1.dwg,Structural,First floor framing
+S-102,Structural Plan - Level 2,struct-2.dwg,Structural,Second floor framing
+S-103,Structural Plan - Roof,struct-roof.dwg,Structural,Roof framing
+S-200,Structural Details,struct-detail.dwg,Structural,Connection details
+M-100,HVAC Plan - Level 1,hvac-1.dwg,Mechanical,First floor HVAC
+M-101,HVAC Plan - Level 2,hvac-2.dwg,Mechanical,Second floor HVAC
+E-100,Electrical Plan - Level 1,elec-1.dwg,Electrical,First floor power
+E-101,Electrical Plan - Level 2,elec-2.dwg,Electrical,Second floor power
+E-200,Lighting Plan - Level 1,light-1.dwg,Electrical,First floor lighting
+E-201,Lighting Plan - Level 2,light-2.dwg,Electrical,Second floor lighting
+P-100,Plumbing Plan - Level 1,plumb-1.dwg,Plumbing,First floor plumbing
+P-101,Plumbing Plan - Level 2,plumb-2.dwg,Plumbing,Second floor plumbing

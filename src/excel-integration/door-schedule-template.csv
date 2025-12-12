@@ -1,0 +1,10 @@
+Mark,Width,Height,Material,Type,Fire Rating,Hardware,Remarks
+101,3'-0",7'-0",Wood,Solid Core,20 min,Lockset A,Main entry
+102,3'-0",7'-0",Wood,Solid Core,20 min,Lockset B,Office
+103,2'-8",7'-0",Wood,Hollow Core,None,Privacy Lock,Bathroom
+104,3'-0",7'-0",Wood,Solid Core,20 min,Lockset A,Conference
+105,2'-6",7'-0",Wood,Hollow Core,None,Privacy Lock,Storage
+201,3'-0",7'-0",Wood,Solid Core,20 min,Lockset A,Entry
+202,2'-8",7'-0",Wood,Hollow Core,None,Lockset B,Bedroom 1
+203,2'-8",7'-0",Wood,Hollow Core,None,Lockset B,Bedroom 2
+204,2'-6",7'-0",Wood,Hollow Core,None,Privacy Lock,Bathroom

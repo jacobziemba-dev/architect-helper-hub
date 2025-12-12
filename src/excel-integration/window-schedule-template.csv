@@ -1,0 +1,9 @@
+Mark,Width,Height,Type,Glazing,Material,U-Value,Remarks
+W1,4'-0",5'-0",Double Hung,Low-E,Vinyl,0.30,Standard window
+W2,6'-0",5'-0",Casement,Low-E,Aluminum,0.28,Living room
+W3,3'-0",4'-0",Fixed,Low-E,Vinyl,0.30,Bathroom
+W4,8'-0",6'-8",Sliding,Low-E,Aluminum,0.28,Patio door
+W5,2'-6",3'-0",Awning,Low-E,Vinyl,0.30,Basement
+W6,5'-0",5'-0",Picture,Low-E,Wood,0.26,Front facade
+W7,3'-6",5'-0",Double Hung,Low-E,Vinyl,0.30,Bedroom
+W8,4'-6",5'-0",Casement,Low-E,Vinyl,0.30,Kitchen
