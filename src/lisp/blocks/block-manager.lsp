@@ -1,7 +1,7 @@
 ;;;======================================================================
 ;;; ARCHITECT HELPER HUB - Block Manager
 ;;; Description: Batch operations for blocks and attributes
-;;; Version: 1.0
+;;; Version: 1.1
 ;;; Dependencies: core/utils.lsp
 ;;;======================================================================
 
@@ -196,14 +196,167 @@
 
 ;;;----------------------------------------------------------------------
 ;;; Function: C:ATTIMPORT
-;;; Description: Import attribute changes from CSV (placeholder)
+;;; Description: Import attribute changes from CSV
 ;;; Usage: Type ATTIMPORT at command line
 ;;;----------------------------------------------------------------------
-(defun C:ATTIMPORT ()
+(defun C:ATTIMPORT (/ filePath csvData header row handle ent count updated failed)
   (princ "\n=== Attribute Import Tool ===")
-  (princ "\nThis feature will import attribute values from CSV")
-  (princ "\nComing in version 1.1!")
+
+  ;; Get CSV file
+  (setq filePath (getfiled "Select CSV File" "" "csv" 0))
+
+  (if filePath
+    (progn
+      ;; Read CSV file
+      (setq csvData (AH:READ-CSV filePath))
+
+      (if csvData
+        (progn
+          (setq header (car csvData))  ; First row is header
+          (setq count 0)
+          (setq updated 0)
+          (setq failed 0)
+
+          ;; Process each data row (skip header)
+          (foreach row (cdr csvData)
+            (setq count (1+ count))
+
+            ;; Get handle (should be second column)
+            (if (>= (length row) 2)
+              (progn
+                (setq handle (cadr row))  ; Handle is in second column
+
+                ;; Try to get entity by handle
+                (setq ent (handent handle))
+
+                (if ent
+                  (progn
+                    ;; Update attributes
+                    (if (AH:UPDATE-BLOCK-ATTRIBUTES ent header row)
+                      (progn
+                        (setq updated (1+ updated))
+                        (princ (strcat "\n[" (itoa count) "] Updated: " handle))
+                      )
+                      (progn
+                        (setq failed (1+ failed))
+                        (princ (strcat "\n[" (itoa count) "] Failed to update: " handle))
+                      )
+                    )
+                  )
+                  (progn
+                    (setq failed (1+ failed))
+                    (princ (strcat "\n[" (itoa count) "] Entity not found: " handle))
+                  )
+                )
+              )
+              (princ (strcat "\n[" (itoa count) "] Skipped: Invalid row format"))
+            )
+          )
+
+          (princ "\n\n=== Import Summary ===")
+          (princ (strcat "\nTotal rows: " (itoa count)))
+          (princ (strcat "\nUpdated: " (itoa updated)))
+          (princ (strcat "\nFailed: " (itoa failed)))
+          (princ "\n\nDone!")
+        )
+        (princ "\nError: Could not read CSV file")
+      )
+    )
+    (princ "\nNo file selected")
+  )
   (princ)
+)
+
+;;;----------------------------------------------------------------------
+;;; Function: AH:READ-CSV
+;;; Description: Read CSV file and return list of rows
+;;; Arguments: filePath - full path to CSV file
+;;; Returns: List of lists (each row is a list of strings)
+;;;----------------------------------------------------------------------
+(defun AH:READ-CSV (filePath / file line dataList row item inQuote char)
+  (setq dataList '())
+  (setq file (open filePath "r"))
+
+  (if file
+    (progn
+      ;; Read each line
+      (while (setq line (read-line file))
+        (setq row '())
+        (setq item "")
+        (setq inQuote nil)
+        (setq i 1)
+
+        ;; Parse line character by character
+        (while (<= i (strlen line))
+          (setq char (substr line i 1))
+
+          (cond
+            ;; Handle quoted fields
+            ((= char "\"")
+             (setq inQuote (not inQuote))
+            )
+
+            ;; Handle comma (field separator)
+            ((and (= char ",") (not inQuote))
+             (setq row (append row (list item)))
+             (setq item "")
+            )
+
+            ;; Regular character
+            (T
+             (setq item (strcat item char))
+            )
+          )
+
+          (setq i (1+ i))
+        )
+
+        ;; Add last item
+        (setq row (append row (list item)))
+        (setq dataList (append dataList (list row)))
+      )
+
+      (close file)
+      dataList
+    )
+    nil
+  )
+)
+
+;;;----------------------------------------------------------------------
+;;; Function: AH:UPDATE-BLOCK-ATTRIBUTES
+;;; Description: Update block attributes from CSV row
+;;; Arguments: ent - block entity
+;;;           header - list of column names
+;;;           row - list of values
+;;; Returns: T if successful, nil if failed
+;;;----------------------------------------------------------------------
+(defun AH:UPDATE-BLOCK-ATTRIBUTES (ent header row / success idx tagName value)
+  (setq success T)
+  (setq idx 0)
+
+  ;; Skip first two columns (Block Name, Handle)
+  (setq idx 2)
+
+  ;; Update each attribute
+  (while (< idx (length header))
+    (setq tagName (nth idx header))
+    (setq value (nth idx row))
+
+    ;; Only update if we have both tag and value
+    (if (and tagName value (> (strlen tagName) 0))
+      (progn
+        ;; Try to set the attribute
+        (if (not (AH:SET-BLOCK-ATTRIBUTE ent tagName value))
+          (setq success nil)
+        )
+      )
+    )
+
+    (setq idx (1+ idx))
+  )
+
+  success
 )
 
 ;;;----------------------------------------------------------------------
@@ -275,8 +428,8 @@
 ;;;----------------------------------------------------------------------
 ;;; Load message
 ;;;----------------------------------------------------------------------
-(princ "\n Block Manager loaded")
-(princ "\n Commands: BLOCKREPLACE, BLOCKCOUNT, ATTEXPORT, BLOCKSCALE, BLOCKLAYER")
+(princ "\n Block Manager loaded (v1.1)")
+(princ "\n Commands: BLOCKREPLACE, BLOCKCOUNT, ATTEXPORT, ATTIMPORT, BLOCKSCALE, BLOCKLAYER")
 (princ)
 
 ;;; End of block-manager.lsp

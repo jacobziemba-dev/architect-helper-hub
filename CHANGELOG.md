@@ -2,6 +2,59 @@
 
 All notable changes to Architect Helper Hub will be documented in this file.
 
+## [1.1.0] - 2025-12-12
+
+### Added
+
+**ATTIMPORT - CSV Attribute Import (High Priority Feature)**
+- Import block attributes from CSV files edited in Excel
+- Complete the AutoCAD → Excel → AutoCAD workflow
+- Supports all attribute types
+- CSV parsing with quoted field support
+- Entity lookup by handle for reliable updates
+- Detailed progress reporting and error handling
+
+**UPDATEAREATAGS - Area Tag Update System**
+- Update existing area tags when rooms change
+- Automatically finds nearest closed polyline
+- Supports both TEXT and MTEXT entities
+- Maintains unit consistency (SF/SM)
+- Configurable decimal places
+
+**PDFMULTI - Multi-Page PDF Export**
+- Export all layouts to single PDF file
+- Automatic DSD file generation
+- Support for Color/Monochrome/Grayscale styles
+- Uses AutoCAD PUBLISH command
+- No manual configuration required
+
+**Sheet Manager Module (4 new commands):**
+- `SHEETFROMCSV` - Create sheets from Excel/CSV template
+- `SHEETLIST` - Export current sheets to CSV
+- `SHEETRENUMBER` - Renumber sheets with prefix/suffix
+- `SHEETDELETE` - Delete sheets by wildcard pattern
+
+**Text Tools Module (5 new commands):**
+- `TEXTALIGN` - Align multiple text objects (Left/Right/Top/Bottom)
+- `TEXTFIND` - Find and replace text throughout drawing
+- `TEXTSCALE` - Scale text height by factor
+- `TEXTNUMBER` - Sequential numbering of text objects
+- `TEXTCASE` - Convert text case (UPPER/lower/Title Case)
+
+### Changed
+
+- Updated version to 1.1 across all modules
+- Enhanced startup messages with version info
+- Expanded AH:HELP command with 11 new commands
+- Module load status now includes v1.1 indicator
+
+### Improved
+
+- CSV reading now handles quoted fields properly
+- Better error handling and user feedback
+- More detailed progress reporting in all commands
+- Consistent naming conventions across new modules
+
 ## [1.0.0] - 2025-12-12
 
 ### Initial Release

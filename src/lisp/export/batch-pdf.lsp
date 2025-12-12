@@ -1,7 +1,7 @@
 ;;;======================================================================
 ;;; ARCHITECT HELPER HUB - Batch PDF Export
 ;;; Description: Batch export layouts and sheets to PDF
-;;; Version: 1.0
+;;; Version: 1.1
 ;;; Dependencies: core/utils.lsp
 ;;;======================================================================
 
@@ -244,26 +244,50 @@
 ;;; Description: Export all layouts to a single multi-page PDF
 ;;; Usage: Type PDFMULTI at command line
 ;;;----------------------------------------------------------------------
-(defun C:PDFMULTI (/ pdfPath dwgName layouts)
+(defun C:PDFMULTI (/ pdfPath dwgName dwgPath layouts dsdPath colorMode)
   (princ "\n=== Multi-Page PDF Export ===")
 
+  ;; Get drawing info
+  (setq dwgPath (getvar "DWGPREFIX"))
   (setq dwgName (getvar "DWGNAME"))
-  (setq dwgName (substr dwgName 1 (- (strlen dwgName) 4)))
 
-  (setq pdfPath (getfiled "Save PDF" (strcat dwgName ".pdf") "pdf" 1))
+  ;; Get PDF save location
+  (setq pdfPath (getfiled "Save PDF" (strcat dwgPath dwgName ".pdf") "pdf" 1))
 
   (if pdfPath
     (progn
+      ;; Ask for color mode
+      (initget "Color Monochrome Grayscale")
+      (setq colorMode (getkword "\nPlot style [Color/Monochrome/Grayscale] <Color>: "))
+      (if (not colorMode) (setq colorMode "Color"))
+
+      ;; Get all layouts
       (setq layouts (layoutlist))
 
-      ;; Use PUBLISH command for multi-page PDF
-      (command "._-PUBLISH")
-      ;; This is a simplified version - actual implementation would
-      ;; require creating a DSD file or using the Sheet Set Manager
+      (if layouts
+        (progn
+          (princ (strcat "\nFound " (itoa (length layouts)) " layouts"))
+          (princ "\nCreating DSD file...")
 
-      (princ "\n\nMulti-page PDF creation started")
-      (princ "\nNote: Complete implementation requires DSD file creation")
-      (princ "\nThis feature is planned for v1.1")
+          ;; Create DSD file
+          (setq dsdPath (strcat (getvar "TEMPPREFIX") "ah-multipage.dsd"))
+
+          (if (AH:CREATE-DSD-FILE dsdPath layouts pdfPath colorMode)
+            (progn
+              (princ "\nPublishing to PDF...")
+
+              ;; Execute PUBLISH command with DSD file
+              (command "._-PUBLISH" dsdPath)
+
+              (princ "\n\nMulti-page PDF export started")
+              (princ (strcat "\nOutput: " pdfPath))
+              (princ "\nCheck command line for PUBLISH progress")
+            )
+            (princ "\nError: Could not create DSD file")
+          )
+        )
+        (princ "\nNo layouts found in drawing")
+      )
     )
     (princ "\nCanceled")
   )
@@ -271,9 +295,87 @@
 )
 
 ;;;----------------------------------------------------------------------
+;;; Function: AH:CREATE-DSD-FILE
+;;; Description: Create a DSD (Drawing Set Description) file for PUBLISH
+;;; Arguments: dsdPath - path for DSD file
+;;;           layouts - list of layout names
+;;;           pdfPath - output PDF path
+;;;           colorMode - "Color", "Monochrome", or "Grayscale"
+;;; Returns: T if successful, nil if failed
+;;;----------------------------------------------------------------------
+(defun AH:CREATE-DSD-FILE (dsdPath layouts pdfPath colorMode / file dwgPath dwgName ctbFile count)
+  (setq file (open dsdPath "w"))
+
+  (if file
+    (progn
+      (setq dwgPath (strcat (getvar "DWGPREFIX") (getvar "DWGNAME")))
+      (setq dwgName (getvar "DWGNAME"))
+
+      ;; Determine CTB file
+      (cond
+        ((= colorMode "Monochrome") (setq ctbFile "monochrome.ctb"))
+        ((= colorMode "Grayscale") (setq ctbFile "grayscale.ctb"))
+        (T (setq ctbFile ""))
+      )
+
+      ;; Write DSD file header
+      (princ "[DWF6Version]\nVer=1\n" file)
+      (princ "[DWF6MinorVersion]\nMinorVer=1\n" file)
+
+      ;; Password (none)
+      (princ "[DWF6Sheet Password]\nPassword=\n" file)
+      (princ "[DWF6Sheet Password Prompt]\nPromptForPassword=FALSE\n" file)
+
+      ;; Sheet set details
+      (princ (strcat "[DWF6SheetSet]\nName=" dwgName "\n") file)
+      (princ "NoOfCopies=1\n" file)
+      (princ "PlotType=6\n" file)  ; PDF
+      (princ "PublishTo=1\n" file)
+      (princ "SaveSheetSet=FALSE\n" file)
+
+      ;; PDF settings
+      (princ (strcat "[Target Device]\nType=6\nPWD=\nName=" pdfPath "\n") file)
+
+      ;; Sheet data section
+      (setq count 0)
+      (foreach layoutName layouts
+        (princ (strcat "[DWF6Sheet:" (itoa count) "]\n") file)
+        (princ (strcat "DWG=" dwgPath "\n") file)
+        (princ (strcat "Layout=" layoutName "\n") file)
+        (princ "Setup=\n" file)
+        (princ (strcat "OriginalSheetPath=" dwgPath "\n") file)
+        (princ "Has Plot Port=0\n" file)
+        (princ "Has3DDWF=0\n" file)
+
+        (setq count (1+ count))
+      )
+
+      ;; Setup details for each sheet
+      (setq count 0)
+      (foreach layoutName layouts
+        (princ (strcat "[Setup:" (itoa count) "]\n") file)
+        (princ "Plotter=DWG To PDF.pc3\n" file)
+        (princ "PlotStyle=\n" file)
+
+        (if (> (strlen ctbFile) 0)
+          (princ (strcat "StyleSheet=" ctbFile "\n") file)
+          (princ "StyleSheet=\n" file)
+        )
+
+        (setq count (1+ count))
+      )
+
+      (close file)
+      T
+    )
+    nil
+  )
+)
+
+;;;----------------------------------------------------------------------
 ;;; Load message
 ;;;----------------------------------------------------------------------
-(princ "\n Batch PDF Export loaded")
+(princ "\n Batch PDF Export loaded (v1.1)")
 (princ "\n Commands: BATCHPDF, QUICKPDF, BATCHPDFSELECT, PDFMULTI")
 (princ)
 
